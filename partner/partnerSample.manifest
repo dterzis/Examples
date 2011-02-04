@@ -1,0 +1,1 @@
+Manifest-Version: 1.0Main-Class: org.salesforce.samples.PartnerSamplesClass-Path: ./lib/activation.jar ./lib/axis.jar ./lib/axis_ant.jar ./lib/commons-discovery-0.2.jar ./lib/commons-httpclient-3.00rc2.jar ./lib/commons-logging-1.0.4.jar ./lib/jaxrpc.jar ./lib/log4j-1.2.14.jar ./lib/saaj.jar ./lib/wsdl4j-1.5.1.jar

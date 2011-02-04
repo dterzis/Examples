@@ -1,0 +1,69 @@
+<project basedir="." default="jar.sample">
+	<property name="generated.dir" value="temp" />
+	<property name="build.dir" value="build" />
+	<property name="local.wsdl" value="partner.wsdl.xml" />
+
+	<path id="axis.classpath">
+		<fileset dir="lib">
+			<include name="axis*.jar" />
+			<include name="jaxrpc.jar" />
+			<include name="commons-logging-1.0.4.jar" />
+			<include name="commons-discovery-0.2.jar" />
+			<include name="saaj.jar" />
+			<include name="wsdl4j-1.5.1.jar" />
+		</fileset>
+	</path>
+
+	<taskdef resource="axis-tasks.properties" classpathref="axis.classpath" />
+
+	<target name="clean">
+		<delete dir="${generated.dir}" />
+		<delete dir="${build.dir}" />
+		<delete file="sample.jar" />
+	</target>
+
+	<target name="init">
+		<mkdir dir="${generated.dir}" />
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<path id="compile.axis.classpath">
+		<path refid="axis.classpath" />
+		<fileset dir="lib">
+			<include name="junit-4.4.jar" />
+		</fileset>
+	</path>
+
+	<path id="compile.sample.classpath">
+		<path refid="compile.axis.classpath" />
+		<fileset dir="lib">
+			<include name="log4j-1.2.14.jar" />
+		</fileset>
+	</path>
+
+	<path id="sample.classpath">
+		<path refid="compile.sample.classpath" />
+		<pathelement path="${build.dir}" />
+	</path>
+
+	<target name="generate.stubs" depends="init">
+		<axis-wsdl2java output="${generated.dir}" testcase="true" verbose="true" url="${local.wsdl}">
+			<mapping namespace="http://axis.apache.org/ns/interop" package="interop" />
+		</axis-wsdl2java>
+	</target>
+
+	<target name="compile.stubs" depends="generate.stubs">
+		<javac srcdir="${generated.dir}" includes="**/*.java" destdir="${build.dir}" deprecation="off" debug="on" classpathref="compile.axis.classpath" source="1.5" />
+	</target>
+
+	<target name="compile.sample" depends="compile.stubs">
+		<javac srcdir="src" includes="**/*.java" destdir="${build.dir}" deprecation="off" debug="on" classpathref="compile.sample.classpath" source="1.5" />
+	</target>
+
+	<target name="jar.sample" depends="compile.sample">
+		<jar destfile="sample.jar" basedir="${build.dir}" manifest="partnerSample.manifest">
+			<fileset dir="${build.dir}" />
+			<fileset dir="lib" />
+		</jar>
+	</target>
+</project>
